@@ -1,39 +1,39 @@
 # Gmail Account Creator
 
-Automated Gmail account creation tool using Selenium + undetected-chromedriver with anti-bot bypass. Supports custom dropdown handling, keyboard navigation, and proxy rotation.
+Automated Gmail account creation tool using Selenium + undetected-chromedriver with anti-bot bypass. Supports custom dropdown handling, keyboard navigation, and manual QR verification.
 
 ## What is this tool?
 
-Ini tool untuk **otomatisasi pembuatan akun Gmail** secara semi-otomatis. Tool ini mengotomasi 5 dari 8 tahap signup Google:
+This is a **semi-automated Gmail account creation** tool. It automates 5 out of 8 Google signup steps:
 
-1. ✅ Navigasi ke halaman signup
-2. ✅ Isi nama depan & belakang
-3. ✅ Isi tanggal lahir & gender (via keyboard navigation untuk custom dropdown)
-4. ✅ Pilih username (auto-retry jika sudah terpakai)
-5. ✅ Isi password & confirm password
-6. ⚠️ Verifikasi HP (berhenti di QR code)
-7. ⏭️ Email recovery (skip)
+1. ✅ Navigate to signup page
+2. ✅ Fill first & last name
+3. ✅ Fill birthday & gender (via keyboard navigation for custom dropdowns)
+4. ✅ Select username (auto-retry if taken)
+5. ✅ Fill password & confirm password
+6. ⚠️ Phone verification (stops at QR code)
+7. ⏭️ Recovery email (skip)
 8. ⏭️ Terms & conditions (auto-accept)
 
-## Why semi-automatic?
+## Why semi-automated?
 
-Google menggunakan sistem verifikasi yang **tidak bisa di-bypass sepenuhnya via automation**:
+Google uses a verification system that **cannot be fully bypassed via automation**:
 
-- **QR Code Verification**: Google menampilkan QR code yang harus discan menggunakan HP fisik. Ini adalah mekanisme keamanan untuk memverifikasi bahwa user adalah manusia, bukan bot.
-- **Device Fingerprinting**: Google menganalisis browser fingerprint, IP address, dan behavior pattern untuk mendeteksi automation.
-- **No Skip Option**: Tidak ada tombol "skip" atau "try another way" di halaman verifikasi.
+- **QR Code Verification**: Google displays a QR code that must be scanned with a physical phone. This is a security mechanism to verify the user is human, not a bot.
+- **Device Fingerprinting**: Google analyzes browser fingerprint, IP address, and behavior patterns to detect automation.
+- **No Skip Option**: There is no "skip" or "try another way" button on the verification page.
 
-**Kesimpulan**: Tool ini mengotomasi sebanyak mungkin, tapi **verifikasi HP harus dilakukan manual** dengan scan QR code dari HP Anda sendiri.
+**Conclusion**: The tool automates as much as possible, but **phone verification must be done manually** by scanning the QR code with your own phone.
 
 ## Features
 
-- **Undetected ChromeDriver** — bypass bot detection dengan `undetected-chromedriver`
-- **Custom Combobox Navigation** — Google's new UI menggunakan custom React dropdowns, bukan `<select>` standar. Tool ini menggunakan keyboard navigation (ArrowDown + Enter) untuk memilih option
-- **Proxy Support** — EU residential proxy (Frankfurt) untuk meningkatkan acceptance rate
-- **Random Credential Generation** — nama, username, dan password digenerate secara random
-- **Screenshot Capture** — screenshot di setiap step untuk debugging
-- **Auto-retry** — username otomatis generate ulang jika sudah terpakai
-- **Xvfb Headless** — bisa jalan di VPS/headless environment
+- **Undetected ChromeDriver** — bypass bot detection with `undetected-chromedriver`
+- **Custom Combobox Navigation** — Google's new UI uses custom React dropdowns instead of standard `<select>`. This tool uses keyboard navigation (ArrowDown + Enter) to select options
+- **Manual QR Verification** — stops at QR code, requires phone scan to continue
+- **Random Credential Generation** — names, usernames, and passwords generated randomly
+- **Screenshot Capture** — screenshots at each step for debugging
+- **Auto-retry** — username auto-regenerates if already taken (max 5 attempts)
+- **Xvfb Headless** — runs on VPS/headless environments
 
 ## Requirements
 
@@ -41,7 +41,7 @@ Google menggunakan sistem verifikasi yang **tidak bisa di-bypass sepenuhnya via 
 # Python 3.11+
 pip install selenium undetected-chromedriver
 
-# Xvfb untuk headless display (jika jalankan di VPS)
+# Xvfb for headless display (if running on VPS)
 sudo apt install xvfb
 ```
 
@@ -61,52 +61,51 @@ pip install -r requirements.txt
 python3 gmail_creator.py
 ```
 
-Script akan jalan sampai tahap verifikasi HP, lalu menampilkan QR code. **Anda harus scan QR code ini dengan HP Anda untuk melanjutkan.**
+The script runs until the phone verification step, then displays a QR code. **You must scan this QR code with your phone to continue.**
 
 ### With phone number (auto-submit)
 
 ```bash
-python3 gmail_creator.py +6281234567890
+python3 gmail_creator.py +628****7890
 ```
 
-Jika nomor HP diberikan, script akan otomatis mengisi dan submit nomor HP. Namun verifikasi SMS tetap perlu dilakukan manual.
+If a phone number is provided, the script auto-fills and submits it. However, SMS verification still requires manual completion.
 
 ### Output
 
-- **Screenshot**: Disimpan di `/home/ubuntu/gmail_*.png` di setiap step
-- **Account Info**: Disimpan di `/home/ubuntu/gmail_accounts.txt` jika akun berhasil dibuat
-- **Console Output**: Progress di setiap step (1-8)
+- **Screenshots**: Saved at `/home/ubuntu/gmail_*.png` at each step
+- **Account Info**: Saved at `/home/ubuntu/gmail_accounts.txt` if account is successfully created
+- **Console Output**: Progress at each step (1-8)
 
 ## Workflow Detail
 
 ```
-Step 1: Navigate ke accounts.google.com/SignUp
+Step 1: Navigate to accounts.google.com/SignUp
   └─ Chrome browser launched (headless via Xvfb)
-  └─ Proxy: 86.38.236.148:6432 (EU residential)
 
-Step 2: Isi Nama (First + Last)
-  └─ Random nama dari preset: alex.smith, jordan.wilson, taylor.brown, etc.
-  └─ Klik "Next" untuk lanjut
+Step 2: Fill Name (First + Last)
+  └─ Random names from preset: alex.smith, jordan.wilson, taylor.brown, etc.
+  └─ Click "Next" to continue
 
-Step 3: Tanggal Lahir + Gender
-  └─ Day/Year: diisi via text input (ID: day, year)
-  └─ Month: dropdown custom → click → HOME → ENTER (January)
-  └─ Gender: dropdown custom → click → ARROW_DOWN x2 → ENTER (Rather not say)
-  └─ Klik "Next"
+Step 3: Birthday + Gender
+  └─ Day/Year: filled via text input (ID: day, year)
+  └─ Month: custom dropdown → click → HOME → ENTER (January)
+  └─ Gender: custom dropdown → click → ARROW_DOWN x2 → ENTER (Rather not say)
+  └─ Click "Next"
 
 Step 4: Username
-  └─ Format: firstname.lastnameXXXX (XXXX = random 4 digit)
-  └─ Jika username taken → auto generate ulang (max 5 attempts)
-  └─ Klik "Next"
+  └─ Format: firstname.lastnameXXXX (XXXX = random 4 digits)
+  └─ If username taken → auto regenerate (max 5 attempts)
+  └─ Click "Next"
 
 Step 5: Password
-  └─ Panjang 16 karakter: random letters + numbers + special chars (!@#$%)
-  └─ Field: Passwd + PasswdAgain
-  └─ Klik "Next"
+  └─ 16 characters: random letters + numbers + special chars (!@#$%)
+  └─ Fields: Passwd + PasswdAgain
+  └─ Click "Next"
 
 Step 6: Phone Verification ⚠️
   └─ QR CODE appears — MUST scan manually with phone
-  └─ Tidak ada opsi skip atau alternative
+  └─ No skip or alternative options available
   └─ Script stops here
 
 Step 7: Recovery Email (skip)
@@ -123,41 +122,32 @@ Step 8: Terms Accept (auto)
 self.driver = uc.Chrome(options=options, version_main=149)
 ```
 
-### Proxy Configuration
-
-```python
-# EU Residential Proxy (Frankfurt)
-PROXY = "http://mnfsfxoq:a4iwyu00aimj@86.38.236.148:6432"
-# NOTE: Proxy DISABLED for Google (causes issues)
-# Google lebih baik tanpa proxy dari VPS
-```
-
 ### Custom Dropdown Handling
 
-Google's signup form menggunakan **custom React combobox** (bukan standard `<select>`):
+Google's signup form uses **custom React combobox** (not standard `<select>`):
 
 ```python
-# Month dropdown
+# Month dropdown — select January (first option)
 month_cb = driver.find_element(By.XPATH, '//div[@role="combobox"][contains(.,"Month")]')
 month_cb.click()
-actions.send_keys(Keys.HOME).send_keys(Keys.ENTER).perform()  # Select January
+actions.send_keys(Keys.HOME).send_keys(Keys.ENTER).perform()
 
-# Gender dropdown
+# Gender dropdown — select "Rather not say" (3rd option)
 gender_cb = driver.find_element(By.XPATH, '//div[@role="combobox"][contains(.,"Gender")]')
 gender_cb.click()
-actions.send_keys(Keys.ARROW_DOWN, Keys.ARROW_DOWN, Keys.ENTER).perform()  # Rather not say
+actions.send_keys(Keys.ARROW_DOWN, Keys.ARROW_DOWN, Keys.ENTER).perform()
 ```
 
 ### Anti-Bot Measures Bypassed
 
 | Measure | How Bypassed |
 |---------|-------------|
-| `navigator.webdriver` | `delete navigator.__proto__.webdriver` |
-| Automation flag | `--disable-blink-features=AutomationControlled` |
-| Random delays | `time.sleep(random.uniform(2, 5))` |
-| User agent | Random UA dari preset |
-| Autocomplete overlay | JS remove + keyboard nav |
-| ChromeDriver version | `version_main=149` match system Chrome |
+| `navigator.webdriver` flag | `delete navigator.__proto__.webdriver` via init script |
+| Automation controlled | `--disable-blink-features=AutomationControlled` |
+| Random delays | `time.sleep(random.uniform(2, 5))` between actions |
+| User agent | Random UA from preset list |
+| Autocomplete overlay | JS remove + keyboard navigation |
+| ChromeDriver version | `version_main=149` matched to system Chrome |
 
 ## Troubleshooting
 
@@ -167,54 +157,54 @@ actions.send_keys(Keys.ARROW_DOWN, Keys.ARROW_DOWN, Keys.ENTER).perform()  # Rat
 SessionNotCreatedException: ChromeDriver v150 vs Chrome v149
 ```
 
-**Fix**: Pastikan `version_main=149` di `uc.Chrome()`
+**Fix**: Ensure `version_main=149` in `uc.Chrome()`
 
-### Xvfb Required
+### Xvfb Required for Headless
 
 ```
 Error: cannot open display
 ```
 
-**Fix**: 
+**Fix**:
 ```bash
 Xvfb :99 -screen 0 1920x1080x24 &
 export DISPLAY=:99
 python3 gmail_creator.py
 ```
 
-### No CAPTCHA/Phone Verification Bypass
+### Phone Verification Has No Bypass
 
-Script **tidak bisa bypass** verifikasi HP. Ini adalah security feature Google yang tidak memiliki public API atau bypass method yang reliable.
+The script **cannot bypass** phone verification. This is a Google security feature with no reliable public bypass API.
 
-**Alternatif yang bisa dicoba**:
-1. Gunakan nomor HP Indonesia sendiri (scan QR cepat, 30 detik)
-2. Gunakan Google Voice / VoIP number (lemah ke Google)
-3. Gunakan Gmail Workspace trial (14 hari, no phone required)
-4. Beli akun Gmail yang sudah terverifikasi
+**Alternatives to try**:
+1. Use your own Indonesian phone number (QR scan takes ~30 seconds)
+2. Use Google Voice / VoIP number (weak against Google detection)
+3. Use Gmail Workspace trial (14 days, no phone required)
+4. Buy pre-verified Gmail accounts
 
 ## Limitations
 
-- ❌ Tidak bisa bypass phone verification (QR code required)
-- ❌ Tidak bisa bypass CAPTCHA jika muncul di tahap awal
-- ❌ Tidak support batch creation (1 akun per run)
-- ⚠️ Username generation sederhana — kemungkinan collision
-- ⚠️ Proxy di-VPS bisa di-blacklist oleh Google
+- ❌ Cannot bypass phone verification (QR code required)
+- ❌ Cannot bypass CAPTCHA if it appears early in signup
+- ❌ No batch creation (1 account per run)
+- ⚠️ Username generation is simple — possible collisions
+- ⚠️ VPS proxy IP can be blacklisted by Google
 
 ## Disclaimer
 
-Tool ini dibuat untuk **educational and research purposes only**. Penggunaan untuk spam, abuse, atau melanggar Google Terms of Service adalah tanggung jawab pengguna sendiri.
+This tool is for **educational and research purposes only**. Any use for spam, abuse, or violation of Google Terms of Service is the user's own responsibility.
 
-- Google actively blocks automated signups dari IP range VPS/datacenter
-- Phone verification adalah security feature yang tidak mungkin di-bypass sepenuhnya
-- Abuse bisa menyebabkan IP ban permanen
+- Google actively blocks automated signups from VPS/datacenter IP ranges
+- Phone verification is a security feature that cannot be fully bypassed
+- Abuse may result in permanent IP ban
 
-## Future Improvements
+## Roadmap
 
-- [ ] Support untuk batch creation dengan delay
-- [ ] Integrasi dengan 2captcha API untuk CAPTCHA solving
-- [ ] Better username generation (less collision)
+- [ ] Batch creation support with delays between accounts
+- [ ] 2captcha API integration for CAPTCHA solving
+- [ ] Better username generation (reduce collision rate)
 - [ ] Proxy rotation pool
-- [ ] Session state persistence (resume dari step yang gagal)
+- [ ] Session state persistence (resume from failed step)
 
 ## License
 
